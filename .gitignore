@@ -30,3 +30,7 @@
 *.exe
 *.out
 *.app
+/simple_chat/report/dist/
+/simple_chat/report/build/
+/simple_chat/chat/dist/
+/simple_chat/chat/build/
