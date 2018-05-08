@@ -1,0 +1,46 @@
+cmake_minimum_required(VERSION 3.2)
+
+if($ENV{TRAVIS_BUILD_NUMBER})
+    set(VERSION_BUILD $ENV{TRAVIS_BUILD_NUMBER})
+    set(VERSION_BUILD_MAJOR 1)
+    set(VERSION_BUILD_MINOR 0)
+else()
+    set(VERSION_BUILD 1)
+    set(VERSION_BUILD_MAJOR 1)
+    set(VERSION_BUILD_MINOR 0)
+endif()
+
+project(report_app VERSION ${VERSION_BUILD_MAJOR}.${VERSION_BUILD_MINOR}.${VERSION_BUILD})
+
+set(CMAKE_INCLUDE_CURRENT_DIR ON)
+set(CMAKE_AUTOUIC ON)
+set(CMAKE_AUTOMOC ON)
+set(CMAKE_AUTORCC ON)
+
+set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
+
+
+# Find the QtWidgets library
+find_package(Qt5 COMPONENTS Widgets REQUIRED)
+
+
+# Tell CMake to create the helloworld executable
+add_executable(report main.cpp report.cpp report.h report.ui)
+
+# Use the Widgets module from Qt 5.
+target_link_libraries(report Qt5::Widgets)
+
+install(TARGETS report RUNTIME DESTINATION bin COMPONENT report_app)
+
+
+set(CPACK_GENERATOR DEB)
+
+set(CPACK_PACKAGE_VERSION_MAJOR "${PROJECT_VERSION_MAJOR}")
+set(CPACK_PACKAGE_VERSION_MINOR "${PROJECT_VERSION_MINOR}")
+set(CPACK_PACKAGE_VERSION_PATCH "${PROJECT_VERSION_PATCH}")
+
+set(CPACK_PACKAGE_CONTACT ranihilaltor@gmail.com)
+
+include (CPack)
