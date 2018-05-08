@@ -1,0 +1,27 @@
+<RCC>
+    <qresource prefix="/">
+        <file>main.qml</file>
+        <file>emoji/beam.png</file>
+        <file>emoji/expr_face.png</file>
+        <file>emoji/frowning.png</file>
+        <file>emoji/grin.png</file>
+        <file>emoji/grinning_s.png</file>
+        <file>emoji/grinning_squint.png</file>
+        <file>emoji/grinning_sw.png</file>
+        <file>emoji/grinning.png</file>
+        <file>emoji/heart_smile.png</file>
+        <file>emoji/kiss_face.png</file>
+        <file>emoji/kiss.png</file>
+        <file>emoji/neutral.png</file>
+        <file>emoji/raised_eye.png</file>
+        <file>emoji/rolling.png</file>
+        <file>emoji/savor.png</file>
+        <file>emoji/sloghtly.png</file>
+        <file>emoji/smile_face.png</file>
+        <file>emoji/smile.png</file>
+        <file>emoji/sunglass.png</file>
+        <file>emoji/tears.png</file>
+        <file>emoji/think.png</file>
+        <file>emoji/wink.png</file>
+    </qresource>
+</RCC>
