@@ -21,8 +21,6 @@ set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
-
-# Find the QtWidgets library
 find_package(Qt5 COMPONENTS Core Qml Quick REQUIRED)
 find_package(Boost REQUIRED)
 
@@ -30,18 +28,14 @@ add_definitions(${Qt5Widgets_DEFINITIONS} ${QtQml_DEFINITIONS} ${${Qt5Quick_DEFI
 
 qt5_add_resources(RESOURCES qml.qrc)
 
-# Tell CMake to create the helloworld executable
 add_executable(chat main.cpp gui.cpp test.cpp gui.h test.h defines.h ${RESOURCES})
 
-
-# Use the Widgets module from Qt 5.
 target_link_libraries(chat Qt5::Core Qt5::Qml Qt5::Quick)
 target_link_libraries(chat -ldl -lbreakpad -lbreakpad_client -lpthread)
 
 target_include_directories(chat PRIVATE /usr/local/include/breakpad/)
 
 install(TARGETS chat RUNTIME DESTINATION bin COMPONENT chat_app)
-
 
 set(CPACK_GENERATOR DEB)
 

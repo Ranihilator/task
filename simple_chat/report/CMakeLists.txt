@@ -21,19 +21,13 @@ set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
-
-# Find the QtWidgets library
 find_package(Qt5 COMPONENTS Widgets REQUIRED)
 
-
-# Tell CMake to create the helloworld executable
 add_executable(report main.cpp report.cpp report.h report.ui)
 
-# Use the Widgets module from Qt 5.
 target_link_libraries(report Qt5::Widgets)
 
 install(TARGETS report RUNTIME DESTINATION bin COMPONENT report_app)
-
 
 set(CPACK_GENERATOR DEB)
 
