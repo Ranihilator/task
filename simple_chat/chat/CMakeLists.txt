@@ -21,10 +21,11 @@ set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
-find_package(Qt5 COMPONENTS Core Qml Quick REQUIRED)
-find_package(Boost REQUIRED)
-
 add_definitions(${Qt5Widgets_DEFINITIONS} ${QtQml_DEFINITIONS} ${${Qt5Quick_DEFINITIONS}})
+add_definitions(${Boost_INCLUDE_DIRS} ${Boost_LIBRARIES})
+
+find_package(Qt5 COMPONENTS Core Qml Quick REQUIRED)
+find_package(Boost COMPONENTS stacktrace_backtrace stacktrace_basic stacktrace_basic stacktrace_addr2line REQUIRED)
 
 qt5_add_resources(RESOURCES qml.qrc)
 
