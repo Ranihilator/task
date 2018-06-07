@@ -1,3 +1,9 @@
+/*!
+\file
+\brief Заголовок обработчика сообщений
+
+*/
+
 #pragma once
 
 #include "application.hpp"

@@ -1,3 +1,9 @@
+/*!
+\file
+\brief Заголовок C++ переходника
+
+*/
+
 #pragma once
 
 #include <cstdint>
@@ -13,23 +19,18 @@
 #include "cmsis_os.h"
 #include "usart.h"
 
-extern osSemaphoreId CMD_SemaphoresHandle;
+extern osSemaphoreId CMD_SemaphoresHandle;			/// Элемент синхронизации
 
+/*!
+\brief список комманд
+*/
 enum class CMD
 {
-	CMD_NULL				= 0x00,
-	CMD_LED_ON				= 0x01,
-	CMD_LED_OFF				= 0x02,
-	CMD_GET_ADC_AVG_VOLTAGE = 0x03,
-	CMD_SET_ADC_SAMPLE_RATE = 0x04,
+	CMD_NULL				= 0x00,					/// Пустая команда (ничего не делать)
+	CMD_LED_ON				= 0x01,					/// Включить светодиод
+	CMD_LED_OFF				= 0x02,					/// Выключить светодиод
+	CMD_GET_ADC_AVG_VOLTAGE = 0x03,					/// Получить усредненное напряжение
+	CMD_SET_ADC_SAMPLE_RATE = 0x04,					/// Установить частоту дискретизации АЦП и ЦАП
 
-	CMD_NACK				= 0xFF
-};
-
-enum class ACK
-{
-	ACK_OK					= 0x00,
-	ACK_BUSY				= 0x01,
-
-	NACK					= 0xFF
+	CMD_NACK				= 0xFF					/// Неиспользуемая комманда
 };

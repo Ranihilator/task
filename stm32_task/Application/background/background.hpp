@@ -1,3 +1,8 @@
+/*!
+\file
+\brief Заголовок фоновых процессов
+
+*/
 #pragma once
 
 #include "application.hpp"

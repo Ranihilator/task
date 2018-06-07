@@ -1,3 +1,9 @@
+/*!
+\file
+\brief Заголовок парсера протокола
+
+*/
+
 #pragma once
 
 #include <cstdint>
@@ -5,32 +11,47 @@
 #include <stack>
 #include <vector>
 #include <array>
-#include <tuple>
 #include <algorithm>
 
 namespace COMMAND_PROCESS
 {
 
-template <uint32_t BUFFER_SIZE>
+enum class ACK
+{
+	ACK_OK					= 0x00,
+	ACK_BUSY				= 0x01,
+
+	NACK					= 0xFF
+};
+
+template <uint32_t BUFFER_SIZE, uint32_t QUEUE_SIZE>
 class Parser
 {
 
 public:
 	Parser(std::stack <std::vector<uint8_t>> &_frame):
-		pos(0), frame(_frame)
+		frame(_frame), pos(0)
 	{}
 
 	bool work()
 	{
 		this->frame.push(std::vector<uint8_t>());
+		bool is_busy = false;
 
-		//for (auto it = this->buffer.begin(); it != this->buffer.end(); ++it)
-		for (auto i = 0; i < pos; ++i)
+		for (uint32_t i = 0; i < pos; ++i)
 		{
 			if (this->buffer[i] == 0x00)
 			{
 				if (i + 1 == pos)
-					this->frame.push(std::vector<uint8_t>());
+				{
+					if (this->frame.size() < QUEUE_SIZE)
+						this->frame.push(std::vector<uint8_t>());
+					else
+					{
+						is_busy = true;
+						break;
+					}
+				}
 
 				continue;
 			}
@@ -38,7 +59,18 @@ public:
 				this->frame.top().emplace_back(this->buffer[i]);
 		}
 
-		pos = 0;
+		if (!is_busy)
+		{
+			this->buffer[0] = static_cast<uint8_t>(ACK::ACK_OK);
+			pos = 1;
+		}
+		else
+		{
+			this->buffer[0] = static_cast<uint8_t>(ACK::ACK_BUSY);
+			pos = 1;
+		}
+
+		return true;
 	}
 
 	void resize(uint32_t _size)

@@ -5,12 +5,9 @@ ACTION="${1}"
 if [[ ${ACTION} == 'build' ]]; then
 
     echo "Building..."
-
-    cd simple_chat
-
-    cmake -H. -Bbuild
-    cmake --build build
-    cmake --build build --target package
+    
+    cd stm32_task
+    doxygen
 
 elif [[ ${ACTION} == 'deploy' ]]; then
 

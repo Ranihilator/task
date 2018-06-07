@@ -1,20 +1,32 @@
+/*!
+\file
+\brief Обработчик сообщений
+
+*/
+
 #include "command.hpp"
 
-std::stack <std::vector<uint8_t>> queue_cmd;
+std::stack <std::vector<uint8_t>> queue_cmd;								/// Очередь комманд
+
+extern float Voltage;														/// Напряжение на АЦП
+extern float Temperature;													/// Температура аналогового датчика
 
 namespace COMMAND_PROCESS
 {
 
-Parser<256> queue(queue_cmd);
+Parser<RECEIVE_BUFFER_SIZE, COMMAND_QUEUE_SIZE> queue(queue_cmd);			/// Парсер сообщений
+bool ready = false;															/// Готовность отправить ответ
 
-bool ready = false;
+/*!
+\brief Поток обработчика сообщений
+\param[in] argument аргументы
+*/
 void Task(void const *argument)
 {
 	auto huart = &huart1;
 
 	while(1)
 	{
-
 		if (!ready)
 		{
 			if (HAL_UART_Receive_DMA(huart, queue.data(), queue.capacity()) == HAL_OK)
@@ -27,7 +39,6 @@ void Task(void const *argument)
 			{
 				if (HAL_UART_Transmit_DMA(huart, queue.data(), queue.size()) != HAL_OK)
 					queue.clear();
-
 			}
 	        xSemaphoreGive(CMD_SemaphoresHandle);
 			ready = false;
@@ -36,6 +47,10 @@ void Task(void const *argument)
 	}
 }
 
+/*!
+\brief Callback приема байтов
+\param[in] huart дескриптор usart
+*/
 void Command(UART_HandleTypeDef *huart)
 {
 	HAL_UART_DMAStop(huart);
@@ -46,6 +61,10 @@ void Command(UART_HandleTypeDef *huart)
 	CLEAR_BIT(huart->Instance->CR1, USART_CR1_IDLEIE);
 }
 
+/*!
+\brief Callback отправки байтов
+\param[in] huart дескриптор usart
+*/
 void Answear(UART_HandleTypeDef *huart)
 {
 	HAL_UART_DMAStop(huart);
@@ -53,6 +72,10 @@ void Answear(UART_HandleTypeDef *huart)
 	queue.clear();
 }
 
+/*!
+\brief Callback сбоя usart
+\param[in] huart дескриптор usart
+*/
 void Error(UART_HandleTypeDef *huart)
 {
 	if (huart->Instance->ISR & UART_FLAG_PE)

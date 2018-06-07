@@ -1,3 +1,9 @@
+/*!
+\file
+\brief C++ переходник
+
+*/
+
 #include "application.hpp"
 
 void (*Application_Background)(void const *argument) = &BACKGROUND_PROCESS::Task;

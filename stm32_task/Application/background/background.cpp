@@ -1,17 +1,28 @@
+/*!
+\file
+\brief Фоновые процессы
+
+*/
+
 #include "background.hpp"
 #include "stm32f3xx_hal.h"
 
-extern std::stack <std::vector<uint8_t>> queue_cmd;
-extern TIM_HandleTypeDef htim3;
-extern uint8_t Read_Voltage;
-extern uint32_t ADC_Buffer[1000];
+extern std::stack <std::vector<uint8_t>> queue_cmd;						/// Очередь комманд
+extern TIM_HandleTypeDef htim3;											/// Таймер АЦП и ЦАП
+extern uint8_t Read_Voltage;											/// Флаг о необходимости оцифровать коды АЦП
+extern uint32_t ADC_Buffer[1000];										/// Буфер АЦП кодов
 
-float Voltage;
-float Temperature;
+float Voltage;															/// Напряжение на АЦП
+float Temperature;														/// Температура аналогового датчика
 
 namespace BACKGROUND_PROCESS
 {
 
+/*!
+\file
+\brief Изменения частоты дискретизации АЦП И ЦАП
+
+*/
 bool Sample_Rate(uint16_t frequency)
 {
 	const uint16_t min = 100;
@@ -61,6 +72,12 @@ bool Sample_Rate(uint16_t frequency)
 	return true;
 }
 
+/*!
+\file
+\brief поток фоновых процессов
+\param[in] argument аргументы
+
+*/
 void Task(void const *argument)
 {
 	while(1)
