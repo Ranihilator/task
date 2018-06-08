@@ -53,6 +53,11 @@ void Task(void const *argument)
 /*!
 \brief Callback приема байтов
 \param[in] huart дескриптор usart
+\details Принимае пакеты с помощью DMA пока не сработает прерывание \see USART_CR1_IDLEIE
+
+Данная функция вызывается после срабатывания прерывания или если приняли посылку равную \ses Parser::capacity()
+выставляем флаг \see COMMAND_PROCESS::ready выполняем обработку и отправляем ответ
+
 */
 void Command(UART_HandleTypeDef *huart)
 {

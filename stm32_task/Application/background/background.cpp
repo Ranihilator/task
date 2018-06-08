@@ -80,17 +80,25 @@ bool Sample_Rate(uint16_t frequency)
 	return true;
 }
 
-
+	/*!
+	\brief включить светодиод
+	*/
 	void LED_ON(std::string *argument)
 	{
 		HAL_GPIO_WritePin(LD4_GPIO_Port, LD4_Pin, GPIO_PIN_SET);
 	}
 
+	/*!
+	\brief выключить светодиод
+	*/
 	void LED_OFF(std::string *argument)
 	{
 		HAL_GPIO_WritePin(LD4_GPIO_Port, LD4_Pin, GPIO_PIN_RESET);
 	}
 
+	/*!
+	\brief Сменить частоту дескритизации
+	*/
 	void SET_ADC_SAMPLE_RATE(std::string *argument)
 	{
 		if (argument == nullptr)
@@ -111,10 +119,10 @@ std::unordered_map <std::string, scenario> command_list =
 };
 
 /*!
-\file
 \brief поток фоновых процессов
 \param[in] argument аргументы
 
+\details Читаем очередь сообщений и выполняем поставленные задачи из очереди
 */
 void Task(void const *argument)
 {

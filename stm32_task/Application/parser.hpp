@@ -21,6 +21,13 @@ const std::string MS_OK = "OK";
 const std::string MS_BUSY = "BUSY";
 
 
+/*!
+\brief Класс парсер
+
+\details
+\tparam BUFFER_SIZE размер приемного буфера
+\tparam QUEUE_SIZE размер очереди сообщений
+*/
 template <uint32_t BUFFER_SIZE, uint32_t QUEUE_SIZE>
 class Parser
 {
@@ -30,6 +37,13 @@ public:
 		frame(_frame), pos(0)
 	{}
 
+	/*!
+	\brief Тело парсера
+
+	\details Вызывается после завершения приема данных, парсер анализирует посылку и формирует ответ в рабочем буфере.
+
+	Если принимаемая команда совпала со списком \see Parser::ans_value ответ будет содержать переменную
+	*/
 	bool work()
 	{
 		if (pos == 0)
@@ -102,44 +116,67 @@ public:
 		return true;
 	}
 
+	/*!
+	\brief Изменить размер позиции в буфере
+	*/
 	void resize(uint32_t _size)
 	{
 		if (_size < this->buffer.size())
 			pos = _size;
 	}
 
+	/*!
+	\brief Голый указатель на буфер парсера
+	\return указатель на данные
+	*/
 	uint8_t *data()
 	{
 		return static_cast<uint8_t*>(this->buffer.data());
 	}
 
+	/*!
+	\brief Текущая позиция в буфере (размер реальных рабочих данных)
+	\return размер
+	*/
 	const uint32_t size() const
 	{
 		return this->pos;
 	}
 
+	/*!
+	\brief Емкость буфера, размер
+	\return размер
+	*/
 	const uint32_t capacity() const
 	{
 		return this->buffer.size();
 	}
 
+	/*!
+	\brief Очистить буфер
+	*/
 	void clear()
 	{
 		this->pos = 0;
 	}
 
+	/*!
+	\brief Установить пару команду и указатель на переменную для ответной отправки
+	\param[in] str - строковое представление команды
+	\param[in] value - указатель на передаваемую переменную
+	*/
 	void Set_Value(std::string str, float *value)
 	{
 		ans_value[str] = value;
 	}
 
 private:
-	std::array <uint8_t, BUFFER_SIZE> buffer;
+	std::array <uint8_t, BUFFER_SIZE> buffer;					///< Рабочий буфер парсера
 
-	std::stack <std::string> &frame;
-	std::unordered_map <std::string, float*> ans_value;
+	std::stack <std::string> &frame;							///< Сылка на очередь сообщений
+	std::unordered_map <std::string, float*> ans_value;			///< Описание отвечаемых команд (переменные)
 
-	uint32_t pos;
+	uint32_t pos;												///< позиция рабочих байтов буфера парсера
 };
 
 }

@@ -20,7 +20,6 @@
 #include "usart.h"
 
 extern osSemaphoreId CMD_SemaphoresHandle;			/// Элемент синхронизации
-extern osSemaphoreId ANS_SemaphoresHandle;
 
 using scenario = void (*)(std::string *argument);
 
