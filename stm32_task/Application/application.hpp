@@ -20,17 +20,7 @@
 #include "usart.h"
 
 extern osSemaphoreId CMD_SemaphoresHandle;			/// Элемент синхронизации
+extern osSemaphoreId ANS_SemaphoresHandle;
 
-/*!
-\brief список комманд
-*/
-enum class CMD
-{
-	CMD_NULL				= 0x00,					/// Пустая команда (ничего не делать)
-	CMD_LED_ON				= 0x01,					/// Включить светодиод
-	CMD_LED_OFF				= 0x02,					/// Выключить светодиод
-	CMD_GET_ADC_AVG_VOLTAGE = 0x03,					/// Получить усредненное напряжение
-	CMD_SET_ADC_SAMPLE_RATE = 0x04,					/// Установить частоту дискретизации АЦП и ЦАП
+using scenario = void (*)(std::string *argument);
 
-	CMD_NACK				= 0xFF					/// Неиспользуемая комманда
-};

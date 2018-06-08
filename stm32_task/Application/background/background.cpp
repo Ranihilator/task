@@ -7,16 +7,24 @@
 #include "background.hpp"
 #include "stm32f3xx_hal.h"
 
-extern std::stack <std::vector<uint8_t>> queue_cmd;						/// Очередь комманд
+#include <sstream>
+#include <functional>
+#include <unordered_map>
+
+extern std::stack <std::string> queue_cmd;								/// Очередь комманд
+
 extern TIM_HandleTypeDef htim3;											/// Таймер АЦП и ЦАП
 extern uint8_t Read_Voltage;											/// Флаг о необходимости оцифровать коды АЦП
 extern uint32_t ADC_Buffer[1000];										/// Буфер АЦП кодов
 
 float Voltage;															/// Напряжение на АЦП
-float Temperature;														/// Температура аналогового датчика
 
 namespace BACKGROUND_PROCESS
 {
+
+namespace SCENARIO
+{
+
 
 /*!
 \file
@@ -72,6 +80,36 @@ bool Sample_Rate(uint16_t frequency)
 	return true;
 }
 
+
+	void LED_ON(std::string *argument)
+	{
+		HAL_GPIO_WritePin(LD4_GPIO_Port, LD4_Pin, GPIO_PIN_SET);
+	}
+
+	void LED_OFF(std::string *argument)
+	{
+		HAL_GPIO_WritePin(LD4_GPIO_Port, LD4_Pin, GPIO_PIN_RESET);
+	}
+
+	void SET_ADC_SAMPLE_RATE(std::string *argument)
+	{
+		if (argument == nullptr)
+			return;
+
+		uint16_t value = stoi(*argument);;
+
+		Sample_Rate(value);
+	}
+
+}
+
+std::unordered_map <std::string, scenario> command_list =
+{
+		{"LED_ON", &SCENARIO::LED_ON},
+		{"LED_OFF", &SCENARIO::LED_OFF},
+		{"SET_ADC_SAMPLE_RATE", &SCENARIO::SET_ADC_SAMPLE_RATE}
+};
+
 /*!
 \file
 \brief поток фоновых процессов
@@ -92,18 +130,17 @@ void Task(void const *argument)
 			}
 
 			Voltage = ADC * 0.000732421875;
-			Temperature = (1.43-Voltage)/0.0043+25.0;
 
 			Read_Voltage = 0;
 		}
 
-		std::vector<uint8_t> task;
+		std::string task;
 
         xSemaphoreTake(CMD_SemaphoresHandle, portMAX_DELAY);
 
         if (!queue_cmd.empty())
         {
-        	task = queue_cmd.top();
+        	task.swap(queue_cmd.top());
         	queue_cmd.pop();
         }
 
@@ -111,40 +148,23 @@ void Task(void const *argument)
 
         if (!task.empty())
         {
-        	switch (static_cast<CMD>(task[0]))
-        	{
-				case CMD::CMD_LED_ON:
-				{
-					HAL_GPIO_WritePin(LD4_GPIO_Port, LD4_Pin, GPIO_PIN_SET);
-					break;
-				}
-				case CMD::CMD_LED_OFF:
-				{
-					HAL_GPIO_WritePin(LD4_GPIO_Port, LD4_Pin, GPIO_PIN_RESET);
-					break;
-				}
-				case CMD::CMD_GET_ADC_AVG_VOLTAGE:
-				{
-					break;
-				}
-				case CMD::CMD_SET_ADC_SAMPLE_RATE:
-				{
-					if (task.size() == 3)
-					{
-						uint16_t value;
+            std::string command;
+            std::string argument;
 
-						value = task[1]<<8;
-						value |= task[2];
+            auto find_del = task.find(" ");
 
-						Sample_Rate(value);
-					}
-					break;
-				}
+            if (find_del != std::string::npos)
+            {
+            	command = task.substr(0, find_del);
+            	argument = task.substr(find_del);
+            }
+            else
+            	command = std::move(task);
 
-				default:
-				{}
-        	}
-        	task.clear();
+            auto find = command_list.find(command);
+
+            if (find != command_list.end())
+            	find->second(&argument);
         }
 
         osDelay(1);

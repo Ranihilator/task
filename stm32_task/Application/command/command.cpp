@@ -5,11 +5,10 @@
 */
 
 #include "command.hpp"
+#include <unordered_map>
 
-std::stack <std::vector<uint8_t>> queue_cmd;								/// Очередь комманд
-
+std::stack <std::string> queue_cmd;											/// Очередь комманд
 extern float Voltage;														/// Напряжение на АЦП
-extern float Temperature;													/// Температура аналогового датчика
 
 namespace COMMAND_PROCESS
 {
@@ -24,25 +23,29 @@ bool ready = false;															/// Готовность отправить о
 void Task(void const *argument)
 {
 	auto huart = &huart1;
+    queue.Set_Value("GET_ADC_AVG_VOLTAGE", &Voltage);
 
 	while(1)
 	{
-		if (!ready)
-		{
-			if (HAL_UART_Receive_DMA(huart, queue.data(), queue.capacity()) == HAL_OK)
-				SET_BIT(huart->Instance->CR1, USART_CR1_IDLEIE);
-		}
-		else
-		{
-	        xSemaphoreTake(CMD_SemaphoresHandle, portMAX_DELAY);
-			if (queue.work())
-			{
-				if (HAL_UART_Transmit_DMA(huart, queue.data(), queue.size()) != HAL_OK)
-					queue.clear();
-			}
-	        xSemaphoreGive(CMD_SemaphoresHandle);
-			ready = false;
-		}
+   		if (!ready)
+   		{
+   			if (HAL_UART_Receive_DMA(huart, queue.data(), queue.capacity()) == HAL_OK)
+   				SET_BIT(huart->Instance->CR1, USART_CR1_IDLEIE);
+   		}
+   		else
+   		{
+   	        xSemaphoreTake(CMD_SemaphoresHandle, portMAX_DELAY);
+
+   			if (queue.work())
+   			{
+  				if (HAL_UART_Transmit_DMA(huart, queue.data(), queue.size()) != HAL_OK)
+   					queue.clear();
+   			}
+   	        xSemaphoreGive(CMD_SemaphoresHandle);
+    		ready = false;
+    	}
+
+
 		osDelay(1);
 	}
 }

@@ -85,6 +85,7 @@ void MX_TIM3_Init(void)
   {
     _Error_Handler(__FILE__, __LINE__);
   }
+
 }
 
 void HAL_TIM_Base_MspInit(TIM_HandleTypeDef* tim_baseHandle)

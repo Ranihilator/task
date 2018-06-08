@@ -34,3 +34,8 @@
 /simple_chat/report/build/
 /simple_chat/chat/dist/
 /simple_chat/chat/build/
+/stm32_task/Debug
+/stm32_task/Release
+/stm32_task/Inc/Backup
+/stm32_task/Src/Backup
+/stm32_task/Application/Backup

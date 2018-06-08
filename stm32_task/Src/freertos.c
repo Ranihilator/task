@@ -59,6 +59,7 @@
 osThreadId defaultTaskHandle;
 osThreadId Command_TaskHandle;
 osSemaphoreId CMD_SemaphoresHandle;
+osSemaphoreId ANS_SemaphoresHandle;
 
 /* USER CODE BEGIN Variables */
 
@@ -93,6 +94,10 @@ void MX_FREERTOS_Init(void) {
   osSemaphoreDef(CMD_Semaphores);
   CMD_SemaphoresHandle = osSemaphoreCreate(osSemaphore(CMD_Semaphores), 1);
 
+  /* definition and creation of ANS_Semaphores */
+  osSemaphoreDef(ANS_Semaphores);
+  ANS_SemaphoresHandle = osSemaphoreCreate(osSemaphore(ANS_Semaphores), 1);
+
   /* USER CODE BEGIN RTOS_SEMAPHORES */
   /* add semaphores, ... */
   /* USER CODE END RTOS_SEMAPHORES */
@@ -107,7 +112,7 @@ void MX_FREERTOS_Init(void) {
   defaultTaskHandle = osThreadCreate(osThread(defaultTask), NULL);
 
   /* definition and creation of Command_Task */
-  osThreadDef(Command_Task, Start_Command_Task, osPriorityNormal, 0, 512);
+  osThreadDef(Command_Task, Start_Command_Task, osPriorityNormal, 0, 640);
   Command_TaskHandle = osThreadCreate(osThread(Command_Task), NULL);
 
   /* USER CODE BEGIN RTOS_THREADS */
